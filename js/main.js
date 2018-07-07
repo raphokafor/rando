@@ -7,18 +7,15 @@ function saveBookmark(e){
 
     // capture input values
     var siteName = document.getElementById('siteName').value;
-    var siteURL = document.getElementById('siteURL').value;
 
-    if(!validateForm(siteName, siteURL)){
+    if(!validateForm(siteName)){
         return false;
     }
-
 
 
     // combine the 2 values
     var bookmark = {
         name: siteName,
-        url: siteURL
     }
 
     // check if booksmarks array exists in local storage
@@ -71,13 +68,13 @@ function clearForms(){
 
 
 //delete bookmarkfunction
-function removeBookmark(url){
+function removeBookmark(name){
     // get bookmarks from localstorage
     var bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
 
     // loop through these bookmarks
     for(var i=0; i < bookmarks.length; i++){
-        if(bookmarks[i].url === url){
+        if(bookmarks[i].name === name){
             //remove bookmark from array
             bookmarks.splice(i, 1);
         }
@@ -103,12 +100,11 @@ function fetchBookmarks(){
     bookmarksResults.innerHTML = '';
     for(var i=0;i<bookmarks.length;i++){
         var name = bookmarks[i].name;
-        var url = bookmarks[i].url;
 
-        bookmarksResults.innerHTML += '<div class="well">'+
+        bookmarksResults.innerHTML += 
+                                    '<div class="well">'+
                                       '<h3>'+name+
-                                      ' <a class="btn btn-default" target="_blank" href="'+url+'">Visit Website</a> ' +
-                                      ' <a onclick="removeBookmark(\''+url+'\')" class="btn btn-danger">Delete</a> ' +
+                                      ' <a onclick="removeBookmark(\''+name+'\')" class="btn btn-danger">Delete</a> ' +
                                       '</h3>'+
                                       '</div>';
     }
@@ -118,11 +114,10 @@ function fetchBookmarks(){
 // style="float: left; margin-left: 1%; color: red; font-weight: bold;
 
 // ----------------------------------validation function----------------------------------------------------
-function validateForm(siteName, siteURL){
+function validateForm(siteName){
 // prevent blanks and empty entry
     if(!siteName){
 
-        
 
         var errorsForm = document.getElementById('errors');
 
@@ -134,33 +129,39 @@ function validateForm(siteName, siteURL){
         return false;
     }
 
-    if(!siteURL){
-
-        var errorsForm2 = document.getElementById('errors2');
-
-        errorsForm2.setAttribute("style", "color:red; font-size:5px !important;");
-
-        errorsForm2.innerHTML = '<p>You forgot to Enter the Website URL!</p>';
-        // alert('You forgot to Enter the Website URL!');
-        return false;
-    }
-
-    // check http/https match for siteURL
-    var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-    var regex = new RegExp(expression);
-
-    if(!siteURL.match(regex)){
-
-        var errorsForm2 = document.getElementById('errors2');
-
-        errorsForm2.setAttribute("style", "color:red; font-size:5px !important;");
-
-        errorsForm2.innerHTML = '<p>Please use a valid URL</p>';
-
-
-        // alert('Please use a valid URL');
-        return false;
-    }
 
     return true;
+}
+
+
+document.getElementById('random').onclick = function(e){
+
+    e.preventDefault();
+
+    // get bookmarks string array from local storage
+    var bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+
+    // get output div id
+    var bookmarksChoice = document.getElementById('choices');
+
+    if(bookmarks.length > 0) {
+
+        var ri = Math.floor(Math.random() * bookmarks.length);
+    
+        bookmarksChoice.innerHTML =     '<h4>Our Random Choice for you:</h4>'+
+                                        '<div class="well">'+
+                                          ' <h3>'+bookmarks[ri].name+'</h3> ' +
+                                        '</div>';
+    
+        // bookmarks.splice(bookmarks[ri]);
+        // bookmarks.unshift(bookmarks[ri]);
+
+    } else {
+
+        return ;
+
+    }
+
+
+
 }
